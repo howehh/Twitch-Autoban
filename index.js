@@ -10,7 +10,7 @@ const MAX_TIMEOUT = 1209600;
 
 // Add the given name to kill-on-sight list. After the given duration,
 // they will be removed from it.
-function addBannedUser(name, duration) {
+function addBannedUser(name, duration, channel) {
    name = name.toLowerCase();
    if (name in bannedUsers) {
       let timeout = bannedUsers[name]["timeout"];
@@ -18,6 +18,9 @@ function addBannedUser(name, duration) {
    } else {
       bannedUsers[name] = {};
    }
+   
+   client.say(channel, "/unban " + name);
+   client.say(channel, "/timeout " + name + " " + duration);
    
    bannedUsers[name]["duration"] = duration;
    bannedUsers[name]["unbanTime"] = Date.now() + (duration * 1000);
@@ -76,7 +79,9 @@ function listenForCommands() {
          let name = tokens[1];
          let duration = parseInt(tokens[2]);
          if (Number.isInteger(duration) && duration > 0 && duration <= MAX_TIMEOUT) {
-            addBannedUser(name, duration);
+            config.channels.forEach(function(channel) {
+               addBannedUser(name, duration, channel);
+            });
          } else {
             console.log("Invalid input. Duration should be seconds between 0 and " + MAX_TIMEOUT);
          }
@@ -133,8 +138,6 @@ client.on('chat', (channel, tags, message, self) => {
 
 	if (name in bannedUsers) {
       let timeoutDuration = bannedUsers[name]["duration"];
-      
-		client.say(channel, "/timeout " + name + " " + timeoutDuration);
-      addBannedUser(name, timeoutDuration); // reban them with the same duration
+      addBannedUser(name, timeoutDuration, channel); // reban them with the same duration
 	}
 });
