@@ -1,14 +1,7 @@
 const tmi = require('tmi.js');
 const config = require('./config');
 
-// Object of banned users - maps a name to their duration and timeout object 
-//
-// bannedUsers = {
-//    name: {
-//       duration: <x seconds>,
-//       timeout: <timeoutObject>
-//    }
-// }
+// Object of banned users - maps a name to their duration and timeout object
 const bannedUsers = {};
 
 // The max number of seconds a user can be banned for. This is
@@ -27,6 +20,7 @@ function addBannedUser(name, duration) {
    }
    
    bannedUsers[name]["duration"] = duration;
+   bannedUsers[name]["unbanTime"] = Date.now() + (duration * 1000);
    
    bannedUsers[name]["timeout"] = setTimeout(() => {
       removeBannedUser(name);
@@ -96,9 +90,10 @@ function listenForCommands() {
          let result = [];
          for (let i = 0; i < bannedList.length; i++) {
             let user = bannedList[i];
-            result.push(user + ": " + bannedUsers[user]["duration"]);
+            let timeLeft = Math.round((bannedUsers[user]["unbanTime"] - Date.now()) / 1000); 
+            result.push(user + ": " + timeLeft);
          }
-         console.log("Haters on the kill-on-sight list:");
+         console.log("Haters on the kill-on-sight list / Time left on timeout:");
          console.log(result);
          
       } else {
