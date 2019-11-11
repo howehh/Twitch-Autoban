@@ -1,0 +1,15 @@
+{
+  "name": "twitch autoban",
+  "version": "1.0.0",
+  "description": "Automates timing out users on twitch",
+  "main": "index.js",
+  "dependencies": {
+    "tmi.js": "^1.5.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "howeh",
+  "license": "ISC"
+}
