@@ -5,6 +5,7 @@ Logs into your Twitch account and will watch channels for users on the kill-on-s
 1. Install node.js
 2. `npm install` to install node modules
 3. Edit config.json with Twitch name, oauth code, and channels to watch
-4. 'node index.js'
+4. Edit config.json with Github username, password, and Gist ID
+5. 'node index.js'
 
 Note: you must be moderator in the channels that are specified for this program to be useful
