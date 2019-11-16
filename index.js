@@ -40,11 +40,9 @@ backend.connect(function() {
          let duration = parseInt(tokens[2]);
          
          if (Number.isInteger(duration) && duration > 0 && duration <= MAX_TIMEOUT) {
-            config.channels.forEach(function(channel) {
-               backend.addBannedUser(name, duration, channel);
-               console.log(getFormattedDate() + ": Added " + name + " to the kill-on-sight list for "
-                           + duration + " seconds");
-            });
+            backend.addBannedUser(name, duration, duration, config.channel);
+            console.log(getFormattedDate() + ": Added " + name + " to the kill-on-sight list for "
+                        + duration + " seconds");
          } else {
             console.log("Invalid input. Duration should be seconds between 0 and " + MAX_TIMEOUT);
          }
@@ -78,7 +76,9 @@ backend.addChatHandler(function(channel, tags, message) {
 
    if (backend.hasBannedUser(name)) {
       let timeoutDuration = backend.getDuration(name);
-      backend.addBannedUser(name, timeoutDuration, channel); // reban them with same duration
+      
+      // reban them with same duration and reset timeLeft
+      backend.addBannedUser(name, timeoutDuration, timeoutDuration, channel); 
       console.log(getFormattedDate() + ": timed out " + name + " again for "
                   + timeoutDuration + " seconds. Their message was \"" + message + "\"");
    }

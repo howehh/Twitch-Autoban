@@ -4,6 +4,8 @@
   "description": "Automates timing out users on twitch",
   "main": "index.js",
   "dependencies": {
+    "axios": "^0.19.0",
+    "gists": "^2.0.0",
     "tmi.js": "^1.5.0"
   },
   "devDependencies": {},
