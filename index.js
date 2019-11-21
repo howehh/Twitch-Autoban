@@ -7,6 +7,7 @@ const MAX_TIMEOUT = 1209600;
 function prompt() {
    console.log("Enter input as either:");
    console.log(">   'timeout' [name] [seconds]");
+   console.log(">   'ban'     [name]");
    console.log(">   'remove'  [name]");
    console.log(">   'list'")
 }
@@ -40,26 +41,40 @@ backend.connect(function() {
          let duration = parseInt(tokens[2]);
          
          if (Number.isInteger(duration) && duration > 0 && duration <= MAX_TIMEOUT) {
-            backend.addBannedUser(name, duration, duration, config.channel);
-            console.log(getFormattedDate() + ": Added " + name + " to the kill-on-sight list for "
-                        + duration + " seconds");
+            if (backend.addBannedUser(name, duration, duration, config.channel)) {
+               console.log(getFormattedDate() + ": Added " + name + " to the kill-on-sight list for "
+                           + duration + " seconds");
+            } else {
+               console.log(name + " is already perma-banned.");
+            }
          } else {
             console.log("Invalid input. Duration should be seconds between 0 and " + MAX_TIMEOUT);
          }
          
+      } else if (command === "ban" && tokens.length === 2) {
+         let name = tokens[1];
+         if (backend.addPermaBannedUser(name, config.channel)) {
+            console.log(getFormattedDate() + ": Added " + name + " to the permaban kill-on-sight list");
+         } else {
+            console.log(name + " is already perma-banned.");
+         }
+         
       } else if (command === "remove" && tokens.length === 2) {
-         try {
-            let name = tokens[1];
-            backend.removeBannedUser(name);
+         let name = tokens[1];
+         if (backend.removeBannedUser(name)) {
             console.log(getFormattedDate() + ": Removed " + name + " from the kill-on-sight list");
-         } catch (ex) {
-            console.log(ex);
+         } else {
+            console.log(name + " is not on the kill-on-sight list");
          }
          
       } else if (command === "list") {
          let result = [];
          backend.getBannedUsers().forEach(function(user) {
             result.push(user + ": " + backend.getTimeLeft(user));
+         });
+         
+         backend.getPermaBannedUsers().forEach(function(user) {
+            result.push(user + ": permabanned");
          });
          console.log("Haters on the kill-on-sight list / Time left on timeout:");
          console.log(result);
@@ -81,5 +96,9 @@ backend.addChatHandler(function(channel, tags, message) {
       backend.addBannedUser(name, timeoutDuration, timeoutDuration, channel); 
       console.log(getFormattedDate() + ": timed out " + name + " again for "
                   + timeoutDuration + " seconds. Their message was \"" + message + "\"");
+   } else if (backend.hasPermaBannedUser(name)) {
+      backend.addPermaBannedUser(name, channel);
+      console.log(getFormattedDate() + ": banned " + name + " again. " +
+                  "Their message was \"" + message + "\"");
    }
 });
