@@ -1,6 +1,6 @@
 # Twitch Autoban
 
-Logs into your Twitch account and will watch channels for users on the kill-on-sight list. If they are seen, they will be timed out for a desired duration. If they sit their timeout for the full duration, they will be removed from the kill-on-sight list.
+Logs into your Twitch account and will watch channels for users on the ban list. If they are seen, they will be timed out for a desired duration. If they sit their timeout for the full duration, they will be removed from the kill-on-sight list.
  
 1. Install node.js
 2. `npm install` to install node modules
